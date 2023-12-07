@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
 using Math = System.Math;
 using Enum = System.Enum;
+using static Global;
 
 [System.Serializable]
 public class Constraint {
@@ -59,6 +61,7 @@ public enum PointType
 public class DropPoint {
     public Vector3 position;
     public PointType type;
+    public int[] coordinates;
 
     public DropPoint(Vector3 _position) {
         position = _position;
@@ -73,13 +76,30 @@ public class Endless : MonoBehaviour
     public float size = 4f;
     public float towerHeight = 3f;
     public int probabilityRings = 3;
+    public int roundOffset = 2;
+    public int areaIncrement = 3;
     public List<RoundConstraint> rounds = new List<RoundConstraint>();
     private GameObject player;
     private GameObject mazeContainer;
     private GameObject headContainer;
     private GameObject towerContainer;
+    private GameObject powerUpContainer;
+    private DiscoLights discoLights;
     private Transform exitPrefab;
+    private Transform waypointPrefab;
     private Tower[] towers;
+    private PowerUp[] powerups;
+    private Theme[] themes;
+    private Transform exit;
+    private List<Transform> waypoints = new List<Transform>();
+
+    MusicManager mm;
+    private Theme theme;
+
+    private Action onFail;
+    private Action onSuccess;
+
+    private Dictionary<string, dynamic> playerStatistics = new Dictionary<string, dynamic>();
 
     // TODO: create start menu
     // options:
@@ -94,13 +114,38 @@ public class Endless : MonoBehaviour
     // quit (go back to start menu)
     // go back to main menu
 
+    void Awake() {
+        onFail = new Action(fail);
+        onSuccess = new Action(success);
+    }
+
     void Start() {
         towers = SOManager.GetAllInstances<Tower>();
-        player = gameObject.transform.Find("Player").gameObject;
-        mazeContainer = gameObject.transform.Find("MazeContainer").gameObject;
-        headContainer = gameObject.transform.Find("HeadContainer").gameObject;
-        towerContainer = gameObject.transform.Find("TowerContainer").gameObject;
+        powerups = SOManager.GetAllInstances<PowerUp>();
+        themes = SOManager.GetAllInstances<Theme>();
+
+        player = transform.Find("Player").gameObject;
+        mazeContainer = transform.Find("MazeContainer").gameObject;
+        headContainer = transform.Find("HeadContainer").gameObject;
+        towerContainer = transform.Find("TowerContainer").gameObject;
+        powerUpContainer = transform.Find("PowerUpContainer").gameObject;
+        discoLights = FindDeepChild(transform, "DiscoLights").GetComponent<DiscoLights>();
+
         exitPrefab = Resources.Load<Transform>("Prefabs/Exit");
+        waypointPrefab = Resources.Load<Transform>("Prefabs/Waypoint");
+
+        mm = gameObject.GetComponent<MusicManager>();
+        mm.getTracks();
+        mm.addMusicPlayer(player);
+
+        // the head and disco lights have events that should sync with the music
+        headContainer.GetComponent<HeadBob>().mm = mm;
+        discoLights.mm = mm;
+
+        // TODO: react to lose or win conditions
+        EventManager.StartListening("healthDepleted", onFail);
+        EventManager.StartListening("reachedExit", onSuccess);
+
         loadPlayerData();
         startRound();
     }
@@ -112,20 +157,16 @@ public class Endless : MonoBehaviour
     }
 
     void startRound() {
-        // TODO: unload previous round objects if any
+        if (exit) {
+            Destroy(exit.gameObject);
+        }
 
-        // add music
-        MusicManager mm = gameObject.GetComponent<MusicManager>();
-        mm.getTracks();
-        mm.addMusicPlayer(player);
-        MusicTrack track = mm.defaultTrack(round);
-        mm.play();
+        // TODO: add more themes and select a random theme
+        theme = themes[1];
+        mm.setTrack(theme.tracks[rng.Next(0, theme.tracks.Count)]);
 
-        HeadBob bobber = headContainer.transform.Find("AnimationRig").GetComponent<HeadBob>();
-        bobber.bpm = track.bpm;
-        bobber.start();
-
-        // calculate values
+        // method 1
+        // this method increases surface area exponentially and only supports mazes that are n x n, (n + 1) x n, and n x (n + 1)
         int smallest_dim = Math.DivRem(round - 1, 3, out int r) + 3;
         int width = smallest_dim;
         int height = smallest_dim;
@@ -135,24 +176,45 @@ public class Endless : MonoBehaviour
         if (r == 2) {
             height++;
         }
-        // TODO: have rounds where the budget increases instead of the size of the maze
-        // TODO: support a greater variety of aspect ratios
+        int area = width * height;
 
-        int budget = width * height * 100;
+        // method 2
+        // this method increases surface area linearly and supports a greater variety of aspect ratios
+        // will need to adjust exit logic as this gives rise to situations where the exit is between the player and the rest of the maze
+        // the room logic needs adjustment as well
+        // int area = (round + roundOffset) * areaIncrement;
+        // List<int> prime_factors = PrimeFactorization(area);
+        // // split prime factors into two groups
+        // List<int> width_factors = new List<int>();
+        // List<int> height_factors = new List<int>();
+        // for (int i = 0; i < prime_factors.Count; i++) {
+        //     int coinToss = rng.Next(0, 2);
+        //     if (coinToss == 0) {
+        //         width_factors.Add(prime_factors[i]);
+        //     } else {
+        //         height_factors.Add(prime_factors[i]);
+        //     }
+        // }
+        // int width = MultiplyIntegers(width_factors);
+        // int height = MultiplyIntegers(height_factors);
+
+        // TODO: have rounds where the budget increases instead of the size of the maze
+
+        int budget = area * 100;
         float secondsPerSquareUnit = 1f;
-        int time = (int) (secondsPerSquareUnit * width * height * size);
+        int time = (int) (secondsPerSquareUnit * area * size);
 
         List<Room> rooms = new List<Room>();
 
         int num3x3Rooms = 0;
         int num5x5Rooms = 0;
 
-        if ((width * height) >= 36) {
-            num3x3Rooms = (int) Math.Ceiling((double) (width * height) / 36);
+        if (area >= 72) {
+            num3x3Rooms = (int) Math.Ceiling((double) area / 36);
         }
         // After adding 3x3 rooms, 5x5 rooms remove too many walls
-        // if ((width * height) >= 100) {
-        //     num5x5Rooms = (int) Math.Ceiling((double) (width * height) / 100);
+        // if (area >= 100) {
+        //     num5x5Rooms = (int) Math.Ceiling((double) area / 100);
         // }
 
         for (int i = 0; i < num3x3Rooms; i++) {
@@ -186,7 +248,7 @@ public class Endless : MonoBehaviour
                 (height + 1) * size / -2 + vertex[1] * size
             );
         }
-        
+
         // determine starting and ending points
         int latOrLong = rng.Next(0,2);
         int otherSide = rng.Next(0,2);
@@ -206,8 +268,9 @@ public class Endless : MonoBehaviour
 
         Debug.Log($"Exit point: {exitPoint[0]}, {exitPoint[1]}");
 
-        var exit = Instantiate(exitPrefab, transform);
+        exit = Instantiate(exitPrefab, transform);
         exit.transform.position = cellToPosition(exitPoint, exit.localScale.y / 2 + 0.2f);
+        exit.gameObject.layer = LayerMask.NameToLayer("Exit");
 
         var floor = mazeObject.transform.Find("Floor") as Transform;
         headContainer.transform.position = new Vector3(floor.position.x, 10, floor.position.z + floor.localScale.z / 2 + 5);
@@ -233,15 +296,33 @@ public class Endless : MonoBehaviour
             budget -= affordableTowers[towerIndex].price;
         }
         // default behavior without player death statistics
-        int guardWeightScaleFactor = (int) Math.Floor((double) (width * height) / 10);
+        int guardWeightScaleFactor = (int) Math.Floor((double) area / 10);
         // add a potential drop point for each cell in the maze
         List<DropPoint> cellPoints = new List<DropPoint>();
+        int num_sectors_wide = (int) Math.Ceiling((double) width / 25);
+        int num_sectors_high = (int) Math.Ceiling((double) height / 25);
+        List<List<DropPoint>> sectors = new List<List<DropPoint>>();
+        int num_sectors = num_sectors_high * num_sectors_wide;
+        for (int i = 0; i < num_sectors; i++) {
+            sectors.Add(new List<DropPoint>());
+        }
+        waypoints = new List<Transform>();
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 int[] cell = {i, j};
+                int sector = (int) Math.Floor((double) j / 25) * num_sectors_wide + (int) Math.Floor((double) i / 25);
                 Vector3 cellPosition = cellToPosition(cell);
+
+                // drop waypoints for sentries
+                Transform waypoint = Instantiate(waypointPrefab, transform);
+                waypoint.name = $"WaypointAt({i},{j})";
+                waypoint.position = new Vector3(cellPosition.x, 0.5f, cellPosition.z);
+                waypoints.Add(waypoint);
+
                 DropPoint cp = new DropPoint(cellPosition);
+                cp.coordinates = cell;
                 cp.type = PointType.Cell;
+                sectors[sector].Add(cp);
                 int weight = 1;
                 for (int k = 0; k < rooms.Count; k++) {
                     var room = rooms[k];
@@ -320,7 +401,7 @@ public class Endless : MonoBehaviour
         allPoints.AddRange(cellPoints);
         allPoints.AddRange(vertexPoints);
         List<DropPoint> selectedPoints = new List<DropPoint>();
-        // collect as many random spots in the maze as towers
+        // choose as many random spots in the maze as towers
         // we are keeping a separate list for these points in case we don't want to match towers to points by index
         int remainingCellCount = cellPoints.Count;
         for (int i = 0; i < selectedTowers.Count; i++) {
@@ -342,7 +423,7 @@ public class Endless : MonoBehaviour
             int deleteIndex = allPoints.IndexOf(selectedPoint);
             // remove duplicates
             int deleteCount = 0;
-            while(allPoints[deleteIndex] == selectedPoint) {
+            while(allPoints.Count > deleteIndex && allPoints[deleteIndex] == selectedPoint) {
                 allPoints.RemoveAt(deleteIndex);
                 deleteCount++;
             }
@@ -365,8 +446,10 @@ public class Endless : MonoBehaviour
         // selectedPoints.sort(SortByType);
         for (int i = 0; i < selectedTowers.Count; i++) {
             GameObject newTower = Instantiate(selectedTowers[i].towerPrefab, towerContainer.transform);
+            newTower.layer = LayerMask.NameToLayer("Towers");
             TowerBehavior towerBehavior = newTower.GetComponent<TowerBehavior>();
-            towerBehavior.radius *= size;
+            towerBehavior.mm = mm;
+            towerBehavior.scale = size;
             newTower.transform.position = new Vector3(
                 selectedPoints[i].position.x, 
                 selectedTowers[i].towerHeight, 
@@ -376,13 +459,103 @@ public class Endless : MonoBehaviour
 
         // TODO: apply upgrades
 
-        // TODO: add powerups
+        // the maximum number of powerups should be the surface area / 25
+        int max = (int) Math.Ceiling((double) area / 25);
+        int num_powerups = rng.Next(0, max);
+        for (int i = 0; i < num_powerups; i++) {
+            int sector_index = rng.Next(0, sectors.Count);
+            int cell_index = rng.Next(0, sectors[sector_index].Count);
+            DropPoint dp = sectors[sector_index][cell_index];
+            // TODO: save some power ups for later rounds
+            int pu_index = rng.Next(0, powerups.Length);
+            PowerUp selectedPowerUp = powerups[pu_index];
+            GameObject powerup = Instantiate(selectedPowerUp.powerUpPrefab, powerUpContainer.transform);
+            powerup.transform.position = new Vector3(
+                dp.position.x, 
+                1, 
+                dp.position.z
+            );
+        }
 
         // TODO: start countdown
 
-        // TODO: react to lose or win conditions
+        // add disco lights
+        discoLights.theme = theme;
+        discoLights.addLights();
 
-        // on player death save data about the player position at the point of death, the killing shot, and the towers nearby
+        // add wall and floor decorations
+        foreach (Transform childTransform in mazeObject.transform) {
+            var childObject = childTransform.gameObject;
+            MeshRenderer renderer = childObject.GetComponent<MeshRenderer>();
+            if (childTransform == floor) {
+                if (theme.floorMaterials.Count > 0) {
+                    renderer.material = theme.floorMaterials[rng.Next(0,theme.floorMaterials.Count)];
+                }
+            } else {
+                // add wall decorations to 25% of walls
+                bool addMaterial = rng.Next(0, 4) == 0;
+                if (addMaterial && theme.wallMaterials.Count > 0) {
+                    renderer.material = theme.wallMaterials[rng.Next(0,theme.wallMaterials.Count)];   
+                }
+            }
+        }
 
+        // add tower and head decorations
+        if (theme.towerDecoration) {
+            foreach (Transform tower in towerContainer.transform) {
+                GameObject sphere = FindDeepChild(tower, "Sphere").gameObject;
+                GameObject towerDecoration = Instantiate(theme.towerDecoration, tower);
+                Bounds bounds = sphere.GetComponent<Renderer>().bounds;
+                Vector3 topCenter = new Vector3(
+                    bounds.center.x,
+                    bounds.max.y,
+                    bounds.center.z
+                );
+                towerDecoration.transform.position = topCenter;
+            }
+        }
+        if (theme.headDecoration) {
+            GameObject head = FindDeepChild(headContainer.transform, "Head").gameObject;
+            GameObject headDecoration = Instantiate(theme.headDecoration, headContainer.transform);
+            Bounds bounds = head.GetComponent<Renderer>().bounds;
+            Vector3 topCenter = new Vector3(
+                bounds.center.x,
+                bounds.max.y,
+                bounds.center.z
+            );
+            headDecoration.transform.position = topCenter;
+        }
+
+        // add music
+        mm.play();
+    }
+
+    void endRound() {
+        mazeContainer.Clear();
+        towerContainer.Clear();
+        // allow powerups that haven't expired to continue affecting the player in the next round
+        foreach (PowerUpBehavior powerup in powerUpContainer.GetComponentsInChildren<PowerUpBehavior>()) {
+            if (!powerup.claimed) {
+                Destroy(powerup.gameObject);
+            }
+        }
+    }
+
+    void Update() {
+        // debugging statements
+    }
+
+    void fail() {
+        Debug.Log("Round failed");
+        // pause everything
+        Time.timeScale = 0;
+        // TODO: bring up lose screen
+        // TODO: bring music to a stop
+    }
+
+    void success() {
+        endRound();
+        round++;
+        startRound();
     }
 }

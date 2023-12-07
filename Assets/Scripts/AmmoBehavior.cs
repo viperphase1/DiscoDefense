@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class AmmoBehavior : MonoBehaviour
 {
+    [HideInInspector]
     public float damage = 1f;
+    [HideInInspector]
+    public Player player;
+    protected bool destroyInProgress = false;
     private int ricochet = 0;
     private int bounces = 0;
     // Start is called before the first frame update
@@ -22,19 +26,26 @@ public class AmmoBehavior : MonoBehaviour
     }
 
     void OnCollisionEnter(Collision collision) {
-        if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Player")) {
-            Destroy(gameObject);
-            var player = collision.collider.gameObject.GetComponent<Player>();
-            player.health -= damage;
+        if (destroyInProgress) return;
+        if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Player Camera")) {
+            Debug.Log("Ammo/Player Collision");
+            OnDestroy();
+            // player.takeDamage(damage);
             // TODO: hit animation
             // TODO: hit sfx
         }
-        if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Structure")) {
-            if (ricochet == 0 || bounces > 2) {
-                Destroy(gameObject);
+        if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Structures")) {
+            if (ricochet == 0 || bounces > ricochet) {
+                Debug.Log("Ammo/Wall Collision");
+                OnDestroy();
             } else {
                 bounces++;
             }
         }
+    }
+
+    public virtual void OnDestroy() {
+        destroyInProgress = true;
+        Destroy(gameObject);
     }
 }

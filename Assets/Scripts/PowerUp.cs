@@ -2,17 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PowerUp : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+[CreateAssetMenu(fileName = "New Power Up", menuName = "Power Up", order = 0)]
+public class PowerUp : ScriptableObject {
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public GameObject powerUpPrefab;
+
 }

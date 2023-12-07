@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3485c2da10327b408c30f01388d51d9, type: 3}
+  m_Name: Party
+  m_EditorClassIdentifier: 
+  wallMaterials:
+  - {fileID: 2100000, guid: 64b58e5af4b206d4fb7cf68a9759cdc0, type: 2}
+  - {fileID: 2100000, guid: d29b3cc1bb0dade459c6ac6fcc74cc16, type: 2}
+  floorMaterials:
+  - {fileID: 2100000, guid: b8c53ec227ec333429411916cc3c2e63, type: 2}
+  tracks:
+  - {fileID: 11400000, guid: 645b4b429f0984441a3886f0d97c5f66, type: 2}
+  colors:
+  - {r: 1, g: 0.41960785, b: 0.4, a: 0}
+  - {r: 1, g: 0.5921569, b: 0.2901961, a: 0}
+  - {r: 1, g: 0.9137255, b: 0, a: 0}
+  - {r: 0.5568628, g: 0.8901961, b: 0.8352941, a: 0}
+  - {r: 1, g: 0.3882353, b: 0.69411767, a: 0}
+  towerDecoration: {fileID: 1085994581337869994, guid: cbd5ccba10d7d3445b9e5440ca31220f,
+    type: 3}
+  headDecoration: {fileID: 1085994581337869994, guid: cbd5ccba10d7d3445b9e5440ca31220f,
+    type: 3}

@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class MusicManager : MonoBehaviour
 {
-    public MusicTrack[] tracks;
-    private GameObject musicPlayer;
-    private AudioSource audioSource;
-    private AudioClip currentClip;
+    private MusicTrack[] tracks;
     private float[] samples = new float[512];
+    public GameObject musicPlayer;
+    public AudioSource audioSource;
+    public MusicTrack currentTrack;
 
     public MusicTrack[] getTracks() {
         tracks = SOManager.GetAllInstances<MusicTrack>();
@@ -26,16 +26,44 @@ public class MusicManager : MonoBehaviour
             }
             musicPlayer = target;
             audioSource = musicPlayer.AddComponent(typeof(AudioSource)) as AudioSource;
-            if (currentClip) {
-                setClip(currentClip);
+            audioSource.loop = true;
+            if (currentTrack) {
+                setClip(currentTrack.audio);
             }
         }
     }
 
+    public float getIntervalsSinceTrackStart(float rate) {
+        float intervalLength = 60f * rate / currentTrack.bpm;
+        float intervals = audioSource.timeSamples / (currentTrack.audio.frequency * intervalLength);
+        return intervals;
+    }
+
+    public float getPositionBetweenIntervals(float rate) {
+        float intervals = getIntervalsSinceTrackStart(rate);
+        return Mathf.Repeat(intervals, 1.0f);
+    }
+
+    public int getInterval(float rate) {
+        float intervals = getIntervalsSinceTrackStart(rate);
+        int interval = Mathf.FloorToInt(intervals);
+        return interval;
+    }
+
+    public float getIntervalLengthInSeconds(float rate) {
+        return 60f * rate / currentTrack.bpm;
+    }
+
+    public float getSecondsToNextInterval(float rate) {
+        float position = getPositionBetweenIntervals(rate);
+        float toNextInterval = 1 - position;
+        float secondsToNextInterval = toNextInterval * getIntervalLengthInSeconds(rate);
+        return secondsToNextInterval;
+    }
+
     public void setClip(AudioClip clip) {
         audioSource.Stop();
-        currentClip = clip;
-        audioSource.clip = currentClip;
+        audioSource.clip = clip;
     }
 
     public void play() {
@@ -50,11 +78,16 @@ public class MusicManager : MonoBehaviour
 
     }
 
+    public void setTrack(MusicTrack track) {
+        currentTrack = track;
+        setClip(track.audio);
+    }
+
     public MusicTrack defaultTrack(int round) {
         int trackIndex = round % tracks.Length;
-        MusicTrack track = tracks[trackIndex];
-        setClip(track.audio);
-        return track;
+        currentTrack = tracks[trackIndex];
+        setClip(currentTrack.audio);
+        return currentTrack;
     }
 
     public void addVisualizer() {

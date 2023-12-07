@@ -27,6 +27,7 @@ public class MazeRenderer : MonoBehaviour
         floorPrefab = Resources.Load<Transform>("Prefabs/Floor");
 
         GameObject mazeObject = new GameObject();
+        mazeObject.transform.name = "MazeObject";
 
         var floor = Instantiate(floorPrefab, mazeObject.transform);
         floor.name = "Floor";

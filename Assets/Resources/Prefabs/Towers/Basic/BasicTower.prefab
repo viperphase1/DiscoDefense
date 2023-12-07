@@ -159,12 +159,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1cca379bac43f94ca7a86f5b2e041b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ammoPrefab: {fileID: 6635646934891868029, guid: e9364f5d8d20bdd45befc31b3e8ed5af,
+  ammoPrefab: {fileID: 8818231258537387614, guid: b3ce0e5daac68cf4a8e3f97c643ccbfe,
     type: 3}
   radius: 3
   fireRate: 2
   damage: 1
-  velocity: 20
+  velocity: 10
+  scale: 1
+  mm: {fileID: 0}
+  slug: Basic
 --- !u!1 &4844524046038357789
 GameObject:
   m_ObjectHideFlags: 0

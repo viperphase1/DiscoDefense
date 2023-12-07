@@ -105,11 +105,22 @@ public class ArmSwingMovement : MonoBehaviour {
             // we don't want the y component of the forward vector to affect the movement speed
             forwardVector.Normalize();
 
-            // TODO: NEW APPROACH
+            // OLD APPROACH
             // you can simplify this by first calculating the proposed movement vector 
             // then projecting it onto the normal of the collision plane
             // if the projection is a nonzero factor of the plane's inverted normal (let's call this being "negative") set the proposed movement vector to its projection on the collision plane
             // if colliding with two or more walls prevent all movement if the proposed movement vector's projection on the normal of two different collision planes is "negative"
+            // COMPLETE
+
+            // TODO: NEW APPROACH
+            // raycast to the proposed player position from the player's current position
+            // if there was a collision set player position to the point of collision
+            // move the player away from the collision plane along the plane's normal so that the player object is flush with the collider
+            // (i.e. move the player the radius of the player's bounding sphere along the plane's normal)
+            // to check if the player is still colliding with a wall
+            // from the player's new position, raycast in the direction perpendicular to the plane's normal up to the bounding sphere's radius
+            // if the raycaster returns a collision then you will need to also move the player away from the new raycast's collision surface
+            // the distance from the player position to the point of collision
 
             Vector3 proposedMovement = Vector3.zero;
 
@@ -121,7 +132,7 @@ public class ArmSwingMovement : MonoBehaviour {
 
             for (int i = 0; i < collisions.Count; i++) {
                 Vector3 n = getCollisionSurfaceNormal(collisions[i]);
-                Debug.Log($"Collision plane normal ({n.x},{n.y},{n.z})");
+                Debug.Log($"Collision plane normal ({n.x},{n.y},{n.z})"); 
                 Debug.Log($"Proposed movement ({proposedMovement.x},{proposedMovement.y},{proposedMovement.z})");
                 if (forbiddenDirection(proposedMovement, n)) {
                     wallBreaks++;

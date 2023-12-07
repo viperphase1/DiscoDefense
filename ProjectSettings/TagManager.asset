@@ -8,16 +8,16 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Towers
   - Water
   - UI
   - Structures
   - Player
   - Weapons
   - Player Camera
-  - 
-  - 
-  - 
+  - Exit
+  - Waypoints
+  - Temp
   - 
   - 
   - 
