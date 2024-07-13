@@ -24,15 +24,19 @@ public class HeadBob : MonoBehaviour{
         string old_phase = phase;
         if (secondsToNextInterval <= bobSpeed) {
             phase = "down";
-            bobDown(bobSpeed);
         } else {
             phase = "up";
-            bobUp(Mathf.Min(bobSpeed * 1.6f, mm.getIntervalLengthInSeconds(bobRate) - bobSpeed));
         }
         if (phase != old_phase) {
             phaseStart = Time.time;
         }
-
+        if (phase == "down") {
+            bobDown(bobSpeed);
+        }
+        if (phase == "up") {
+            float resetSpeed = Mathf.Min(bobSpeed * 1.6f, mm.getIntervalLengthInSeconds(bobRate) - bobSpeed);
+            bobUp(resetSpeed);
+        }
     }
 
     void bobDown(float duration) {

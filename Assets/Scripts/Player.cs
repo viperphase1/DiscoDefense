@@ -2,25 +2,54 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
     public float maxHealth = 100f;
-    private float health;
-    public Slider healthBar;
+    [HideInInspector]
     public Dictionary<string, GameObject> activePowerUps = new Dictionary<string, GameObject>();
+    public Dictionary<string, StatusEffect> statusEffects = (new StatusEffectsManager()).statusEffects;
+    private float health;
+    private float maxScale;
+    private Slider healthBar;
+    private TextMeshProUGUI healthCount;
+    private AudioSource audioSource;
+    private Dictionary<string, Image> icons = new Dictionary<string, Image>();
 
     void reset() {
         health = maxHealth;
         if (PlayerPrefs.HasKey("AddHealth")) {
             health += (float) PlayerPrefs.GetInt("AddHealth");
         }
+        UpdateHealthBar();
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        healthBar = GetComponentInChildren<Slider>();
+        healthCount = GetComponentInChildren<TextMeshProUGUI>();
+        audioSource = gameObject.AddComponent<AudioSource>();
+        icons["fire"] = Global.FindDeepChild(transform, "Fire Icon").GetComponent<Image>();
+        icons["poison"] = Global.FindDeepChild(transform, "Poison Icon").GetComponent<Image>();
         reset();
+    }
+
+    void Update() {
+        Rigidbody rb = gameObject.GetComponent<Rigidbody>();
+        Debug.Log("Magnitude: " + rb.velocity.magnitude);
+        audioSource.pitch = Mathf.Min(0.8f, rb.velocity.magnitude / 3f);
+        foreach (StatusEffect statusEffect in statusEffects.Values) {
+            takeDamage(statusEffect.Update(Time.deltaTime));
+            icons[statusEffect.EffectType].fillAmount = statusEffect.Level / statusEffect.Threshold;
+        }
+    }
+
+    public void setSwingClip(AudioClip swingClip) {
+        audioSource.clip = swingClip;
+        audioSource.loop = true;
+        audioSource.Play(0);
     }
 
     public void takeDamage(float damage) {
@@ -39,12 +68,28 @@ public class Player : MonoBehaviour
 
     public void UpdateHealthBar()
     {
-        healthBar.value = health / maxHealth;
+        healthBar.value = health / 100f;
+        healthCount.text = health.ToString();
     }
 
     void OnCollisionEnter(Collision collision) {
         if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Exit")) {
             EventManager.TriggerEvent("reachedExit");
+        }
+    }
+
+    private void OnParticleCollision(GameObject psHost)
+    {
+        Debug.Log("Particle collision");
+        if (psHost.CompareTag("Fire"))
+        {
+            Debug.Log("Fire particle collision");
+            statusEffects["fire"].Apply();
+        }
+        if (psHost.CompareTag("Poison"))
+        {
+            Debug.Log("Poison particle collision");
+            statusEffects["poison"].Apply();
         }
     }
 }

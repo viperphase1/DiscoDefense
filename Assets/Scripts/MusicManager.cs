@@ -1,14 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Global;
 
 public class MusicManager : MonoBehaviour
 {
+    private Transform visualizerPrefab;
+    private Transform visualizer;
     private MusicTrack[] tracks;
     private float[] samples = new float[512];
     public GameObject musicPlayer;
     public AudioSource audioSource;
     public MusicTrack currentTrack;
+
+    void Awake() {
+        visualizerPrefab = Resources.Load<Transform>("Prefabs/RingVisualizer");
+    }
 
     public MusicTrack[] getTracks() {
         tracks = SOManager.GetAllInstances<MusicTrack>();
@@ -26,6 +33,7 @@ public class MusicManager : MonoBehaviour
             }
             musicPlayer = target;
             audioSource = musicPlayer.AddComponent(typeof(AudioSource)) as AudioSource;
+            RouteAudioSourceToMixerGroup(audioSource, "Music");
             audioSource.loop = true;
             if (currentTrack) {
                 setClip(currentTrack.audio);
@@ -90,12 +98,15 @@ public class MusicManager : MonoBehaviour
         return currentTrack;
     }
 
-    public void addVisualizer() {
-
+    public void addVisualizer(Transform target) {
+        if (audioSource) {
+            if (visualizer) {
+                Destroy(visualizer);
+            }
+            visualizer = Instantiate(visualizerPrefab, target);
+            visualizer.gameObject.GetComponent<AudioData>().audioSource = audioSource;
+        } else {
+            Debug.Log("Cannot create a visualizer without an audio source");
+        }
     }
-
-    public void updateVisualizer() {
-        audioSource.GetSpectrumData(samples, 0, FFTWindow.Blackman);
-    }
-
 }

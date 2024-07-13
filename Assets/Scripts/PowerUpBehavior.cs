@@ -21,7 +21,7 @@ public class PowerUpBehavior : MonoBehaviour
                 ApplyPowerUp();
             }
             // make it so the powerup cannot be triggered again but keep it around for powerups that have a duration
-            collider.enabled = false;
+            gameObject.GetComponent<Collider>().enabled = false;
             Renderer[] renderers = GetComponentsInChildren<Renderer>();
             foreach (Renderer renderer in renderers) {
                 renderer.enabled = false;

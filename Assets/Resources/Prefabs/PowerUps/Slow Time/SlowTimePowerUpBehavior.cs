@@ -7,7 +7,7 @@ public class SlowTimePowerUpBehavior : PowerUpBehavior
     private float minTimeScale = 0.5f;
     private float minPitch = 0.5f;
     private float myDeltaTime;
-    private float speed = .1f;
+    private float speed = .4f;
     private string action = "hold";
     private float startTime = Mathf.Infinity;
 

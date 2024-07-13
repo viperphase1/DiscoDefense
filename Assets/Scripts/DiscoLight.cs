@@ -2,11 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
+using static Global;
 
 public class DiscoLight : MonoBehaviour
 {
-    [HideInInspector]
-    public Theme theme;
     [HideInInspector]
     public MusicManager mm;
     Random rng = new Random();

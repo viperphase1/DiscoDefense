@@ -6,8 +6,6 @@ using static Global;
 public class DiscoLights : MonoBehaviour
 {
     [HideInInspector]
-    public Theme theme;
-    [HideInInspector]
     public MusicManager mm;
     // determines concentration of lights
     public int unitsPerLight = 9;
@@ -26,7 +24,6 @@ public class DiscoLights : MonoBehaviour
         for (int i = 0; i < numLights; i++) {
             var newLight = Instantiate(lightPrefab, transform);
             DiscoLight discoLight = newLight.GetComponent<DiscoLight>();
-            discoLight.theme = theme;
             discoLight.mm = mm;
             // change the xz coordinate to a random value within the boundingObject's bounds
             newLight.position = new Vector3(Random.Range(b.min.x, b.max.x), newLight.position.y, Random.Range(b.min.z, b.max.z));

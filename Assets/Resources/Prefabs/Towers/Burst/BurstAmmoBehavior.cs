@@ -10,6 +10,7 @@ public class BurstAmmoBehavior : AmmoBehavior
         destroyInProgress = true;
         Debug.Log("Using sub class OnDestroy");
         PointBurst(gameObject.transform.position, new Transform[]{transform}, 100.0f, 0.2f);
+        // TODO: add burst sfx
         StartCoroutine(DestroyBuffer(1));
     }
 

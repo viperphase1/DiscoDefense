@@ -15,8 +15,9 @@ MonoBehaviour:
   wallMaterials: []
   floorMaterials: []
   tracks:
-  - {fileID: 11400000, guid: af7ab86eacb2bec46b4ca9edbbcddebb, type: 2}
-  - {fileID: 11400000, guid: c08a9b6b201796a42b411dcd1d65b1b2, type: 2}
+  - {fileID: 11400000, guid: 5d99e265ceb13d948b0959f5c1222569, type: 2}
+  towerSoundEffects: []
+  swingClip: {fileID: 8300000, guid: 758a1087459eafc4f93290f224fc0add, type: 3}
   colors:
   - {r: 0, g: 0.14186478, b: 1, a: 0}
   - {r: 0, g: 0.8113208, b: 0.36862746, a: 0}

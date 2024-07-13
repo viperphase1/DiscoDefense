@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
+using System;
 
 public class Global
 {
@@ -77,4 +79,35 @@ public class Global
         }
         return b;
     }
+
+    public static void RouteAudioSourceToMixerGroup(AudioSource source, string mixerGroupName) {
+        AudioMixerGroup[] mixerGroups = mixer.FindMatchingGroups(mixerGroupName);
+        if (mixerGroups.Length > 0)
+        {
+            // Assign the first matching mixer group to the audio source
+            source.outputAudioMixerGroup = mixerGroups[0];
+        }
+    }
+
+    public static void NormalizeVolume(AudioSource source, bool useRMS = true)
+    {
+        if (source.clip != null)
+        {
+            float amplitude = useRMS
+                ? AudioNormalizer.GetRMSAmplitude(source.clip)
+                : AudioNormalizer.GetPeakAmplitude(source.clip);
+
+            // Assuming a target amplitude of 0.1 for normalization
+            float targetAmplitude = 0.1f;
+            source.volume = targetAmplitude / amplitude;
+        }
+        else
+        {
+            Debug.LogError("AudioSource does not have an AudioClip assigned.");
+        }
+    }
+
+    public static AudioMixer mixer = Resources.Load<AudioMixer>("Mixer");
+
+    public static Theme theme;
 }

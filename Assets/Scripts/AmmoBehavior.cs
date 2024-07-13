@@ -30,7 +30,7 @@ public class AmmoBehavior : MonoBehaviour
         if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Player Camera")) {
             Debug.Log("Ammo/Player Collision");
             OnDestroy();
-            // player.takeDamage(damage);
+            player.takeDamage(damage);
             // TODO: hit animation
             // TODO: hit sfx
         }

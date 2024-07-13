@@ -94,7 +94,6 @@ public class Endless : MonoBehaviour
     private List<Transform> waypoints = new List<Transform>();
 
     MusicManager mm;
-    private Theme theme;
 
     private Action onFail;
     private Action onSuccess;
@@ -137,6 +136,7 @@ public class Endless : MonoBehaviour
         mm = gameObject.GetComponent<MusicManager>();
         mm.getTracks();
         mm.addMusicPlayer(player);
+        mm.addVisualizer(transform);
 
         // the head and disco lights have events that should sync with the music
         headContainer.GetComponent<HeadBob>().mm = mm;
@@ -162,7 +162,11 @@ public class Endless : MonoBehaviour
         }
 
         // TODO: add more themes and select a random theme
-        theme = themes[1];
+        // theme = themes[rng.Next(0, themes.Length)];
+        theme = themes[0];
+        if (theme.swingClip) {
+            player.GetComponent<Player>().setSwingClip(theme.swingClip);
+        }
         mm.setTrack(theme.tracks[rng.Next(0, theme.tracks.Count)]);
 
         // method 1
@@ -480,7 +484,6 @@ public class Endless : MonoBehaviour
         // TODO: start countdown
 
         // add disco lights
-        discoLights.theme = theme;
         discoLights.addLights();
 
         // add wall and floor decorations
