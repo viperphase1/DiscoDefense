@@ -230,7 +230,7 @@ public class Endless : MonoBehaviour
         }
 
         // draw maze
-        Debug.Log($"Width: {width}, Height: {height}");
+        // Debug.Log($"Width: {width}, Height: {height}");
         var maze = MazeGenerator.Generate(width, height);
         var mr = new MazeRenderer();
         mr.size = size;
@@ -270,7 +270,7 @@ public class Endless : MonoBehaviour
         exitPoint[latOrLong] = rng.Next(otherSide == 1 ? 0 : midPoint, otherSide == 1 ? midPoint : lockedDimension);
         exitPoint[(latOrLong + 1) % 2] = rng.Next(0, unlockedDimension);
 
-        Debug.Log($"Exit point: {exitPoint[0]}, {exitPoint[1]}");
+        // Debug.Log($"Exit point: {exitPoint[0]}, {exitPoint[1]}");
 
         exit = Instantiate(exitPrefab, transform);
         exit.transform.position = cellToPosition(exitPoint, exit.localScale.y / 2 + 0.2f);

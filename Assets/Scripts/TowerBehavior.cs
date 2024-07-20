@@ -106,7 +106,7 @@ public class TowerBehavior : MonoBehaviour
 
     public virtual void fire() {
         if (withinRange) {
-            Debug.Log(slug + ": Fire");
+            // Debug.Log(slug + ": Fire");
             var ammo = Instantiate(ammoPrefab).transform;
             ammo.name = slug + "_" + "ammo";
             var ab = ammo.GetComponent<AmmoBehavior>();

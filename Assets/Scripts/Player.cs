@@ -41,7 +41,7 @@ public class Player : MonoBehaviour
 
     void Update() {
         Rigidbody rb = gameObject.GetComponent<Rigidbody>();
-        Debug.Log("Magnitude: " + rb.velocity.magnitude);
+        // Debug.Log("Magnitude: " + rb.velocity.magnitude);
         audioSource.pitch = Mathf.Min(0.8f, rb.velocity.magnitude / 3f);
         foreach (StatusEffect statusEffect in statusEffects.Values) {
             takeDamage(statusEffect.Update(Time.deltaTime));
@@ -56,7 +56,7 @@ public class Player : MonoBehaviour
     }
 
     public void takeDamage(float damage) {
-        Debug.Log("Hit");
+        // Debug.Log("Hit");
         health -= damage;
         UpdateHealthBar();
         if (health <= 0) {
@@ -84,15 +84,15 @@ public class Player : MonoBehaviour
 
     private void OnParticleCollision(GameObject psHost)
     {
-        Debug.Log("Particle collision");
+        // Debug.Log("Particle collision");
         if (psHost.CompareTag("Fire"))
         {
-            Debug.Log("Fire particle collision");
+            // Debug.Log("Fire particle collision");
             statusEffects["fire"].Apply();
         }
         if (psHost.CompareTag("Poison"))
         {
-            Debug.Log("Poison particle collision");
+            // Debug.Log("Poison particle collision");
             statusEffects["poison"].Apply();
         }
     }

@@ -32,24 +32,18 @@ public class SlowTimePowerUpBehavior : PowerUpBehavior
         if (action == "speedUp") {
             speedUp();
         }
-        if (audioSrc) {
-            Debug.Log("SlowTimeParams: " + Time.timeScale + ", " + audioSrc.pitch);
-        }
     }
 
     void slowDown() {
-        Debug.Log("slowDown");
         Time.timeScale = Mathf.MoveTowards(Time.timeScale, minTimeScale, myDeltaTime * speed);
         audioSrc.pitch = Mathf.MoveTowards(audioSrc.pitch, minTimeScale, myDeltaTime * speed);
         if (Time.timeScale == minTimeScale) {
-            Debug.Log("Hold");
             action = "hold";
             startTime = Time.time;
         }
     }
 
     void speedUp() {
-        Debug.Log("speedUp");
         Time.timeScale = Mathf.MoveTowards(Time.timeScale, 1.0f, myDeltaTime * speed);
         audioSrc.pitch = Mathf.MoveTowards(audioSrc.pitch, 1.0f, myDeltaTime * speed);
         if (Time.timeScale == 1.0f) {
@@ -58,7 +52,6 @@ public class SlowTimePowerUpBehavior : PowerUpBehavior
     }
 
     protected override void ApplyPowerUp() {
-        Debug.Log("ApplyPowerUp: Slow Time");
         action = "slowDown";
     }
 }

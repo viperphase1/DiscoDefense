@@ -64,7 +64,7 @@ public class SentryBehavior : TowerBehavior
         if (distanceToPlayer < searchRadius) {
             // need some way of excluding this tower from the raycast below
             gameObject.layer = LayerMask.NameToLayer("Temp");
-            bool obstructed = Physics.Raycast(transform.position, towerToPlayer, distanceToPlayer, 1 << LayerMask.NameToLayer("Structures") | 1 << LayerMask.NameToLayer("Towers"));
+            bool obstructed = Physics.Raycast(transform.position, towerToPlayer, distanceToPlayer, LayerMaskHelper.GetLayerMask("Structures", "Towers"));
             gameObject.layer = LayerMask.NameToLayer("Towers");
             withinRange = !obstructed;
         }
@@ -81,7 +81,7 @@ public class SentryBehavior : TowerBehavior
                         // not convinced my layer mask logic is correct
                         float newDistanceToPlayer = distanceToPlayer;
                         foreach(Transform waypoint in waypoints) {
-                            bool obstructed = Physics.Raycast(waypoint.position, playerCamera.position - waypoint.position, scale, 1 << LayerMask.NameToLayer("Structures") | 1 << LayerMask.NameToLayer("Towers"));
+                            bool obstructed = Physics.Raycast(waypoint.position, playerCamera.position - waypoint.position, scale, LayerMaskHelper.GetLayerMask("Structures", "Towers"));
                             if (!obstructed) {
                                 if (Vector3.Distance(waypoint.position, playerObject.position) < newDistanceToPlayer) {
                                     toWaypoint = waypoint;

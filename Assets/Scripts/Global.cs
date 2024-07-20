@@ -23,7 +23,7 @@ public class Global
     public static void PointBurst(Vector3 epiCenter, Transform[] affectedObjects, float power = 10.0f, float radius = 2.0f) {
         foreach (Transform t in affectedObjects) {
             var rigidBodies = t.GetComponentsInChildren<Rigidbody>();
-            Debug.Log("PointBurst: Affected RigidBodies: " + rigidBodies.Length);
+            // Debug.Log("PointBurst: Affected RigidBodies: " + rigidBodies.Length);
             foreach (Rigidbody rb in rigidBodies) {
                 rb.velocity = new Vector3(0,0,0);
                 rb.AddExplosionForce(power, epiCenter, radius, 0.0f, ForceMode.Impulse);

@@ -17,7 +17,7 @@ public class LaserBehavior : FollowBehavior
         int layerMask = LayerMaskHelper.GetLayerMask("Structures", "Towers", "Player Camera", "Accessories");
         bool hit = Physics.Raycast(spawnPoint.position, transform.rotation * Vector3.left, out RaycastHit hitInfo, Mathf.Infinity, layerMask);
         if (hit) {
-            Debug.Log("Laser can hit " + hitInfo.collider.transform.name);
+            // Debug.Log("Laser can hit " + hitInfo.collider.transform.name);
             // if it can, set the starting and ending points of the laser so that it spans the space between the spawn point and the contact point
             lineRenderer.positionCount = 2;
             Vector3[] positions = {spawnPoint.position, hitInfo.point};

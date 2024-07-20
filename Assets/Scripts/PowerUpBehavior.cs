@@ -10,7 +10,7 @@ public class PowerUpBehavior : MonoBehaviour
     public bool claimed = false;
     void OnTriggerEnter(Collider collider) {
         if (collider.gameObject.layer == LayerMask.NameToLayer("Player")) {
-            Debug.Log("PowerUp/Player Collision");
+            // Debug.Log("PowerUp/Player Collision");
             claimed = true;
             player = collider.gameObject.GetComponent<Player>();
             if (player.activePowerUps.ContainsKey(slug) && duration > 0f) { 
