@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class SlowTimePowerUpBehavior : PowerUpBehavior
 {
-    private float minTimeScale = 0.5f;
-    private float minPitch = 0.5f;
+    private float minTimeScale = 0.75f;
     private float myDeltaTime;
     private float speed = .4f;
     private string action = "hold";
     private float startTime = Mathf.Infinity;
+    private AudioSource audioSrc;
 
     void Start() {
-        myDeltaTime = Time.deltaTime; 
+        myDeltaTime = Time.deltaTime;
+        audioSrc = GameObject.Find("Root").GetComponent<Endless>().mm.audioSource;
     }
 
     void Update() {
@@ -31,20 +32,24 @@ public class SlowTimePowerUpBehavior : PowerUpBehavior
         if (action == "speedUp") {
             speedUp();
         }
+        if (audioSrc) {
+            Debug.Log("SlowTimeParams: " + Time.timeScale + ", " + audioSrc.pitch);
+        }
     }
 
     void slowDown() {
-        AudioSource audioSrc = player.GetComponent<AudioSource>();
+        Debug.Log("slowDown");
         Time.timeScale = Mathf.MoveTowards(Time.timeScale, minTimeScale, myDeltaTime * speed);
-        audioSrc.pitch = Mathf.MoveTowards(audioSrc.pitch, minPitch, myDeltaTime * speed);
+        audioSrc.pitch = Mathf.MoveTowards(audioSrc.pitch, minTimeScale, myDeltaTime * speed);
         if (Time.timeScale == minTimeScale) {
+            Debug.Log("Hold");
             action = "hold";
             startTime = Time.time;
         }
     }
 
     void speedUp() {
-        AudioSource audioSrc = player.GetComponent<AudioSource>();
+        Debug.Log("speedUp");
         Time.timeScale = Mathf.MoveTowards(Time.timeScale, 1.0f, myDeltaTime * speed);
         audioSrc.pitch = Mathf.MoveTowards(audioSrc.pitch, 1.0f, myDeltaTime * speed);
         if (Time.timeScale == 1.0f) {
@@ -53,6 +58,7 @@ public class SlowTimePowerUpBehavior : PowerUpBehavior
     }
 
     protected override void ApplyPowerUp() {
+        Debug.Log("ApplyPowerUp: Slow Time");
         action = "slowDown";
     }
 }

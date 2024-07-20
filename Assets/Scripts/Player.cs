@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
     private float maxScale;
     private Slider healthBar;
     private TextMeshProUGUI healthCount;
-    private AudioSource audioSource;
+    public AudioSource audioSource;
     private Dictionary<string, Image> icons = new Dictionary<string, Image>();
     public Transform shield;
     public int bullets = 0;
@@ -66,13 +66,14 @@ public class Player : MonoBehaviour
 
     public void addHealth(float amount) {
         health += amount;
+        if (health > maxHealth) health = maxHealth;
         UpdateHealthBar();
     }
 
     public void UpdateHealthBar()
     {
         healthBar.value = health / 100f;
-        healthCount.text = health.ToString();
+        healthCount.text = Mathf.RoundToInt(health).ToString();
     }
 
     void OnCollisionEnter(Collision collision) {

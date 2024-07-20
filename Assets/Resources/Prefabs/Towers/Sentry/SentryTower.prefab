@@ -160,6 +160,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 054a5756df76023499fe622a307c1502, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tapRightTriggerAction:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Tap Right Trigger
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 0f2307e0-7523-468b-950d-1e779945a386
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -7926810092601147110, guid: 9026631206fc3e94dba9ba39b208532a,
+      type: 3}
   ammoPrefab: {fileID: 8818231258537387614, guid: b3ce0e5daac68cf4a8e3f97c643ccbfe,
     type: 3}
   defaultSound: {fileID: 8300000, guid: 03c88f197daa9c347b4fd191c0c25d7f, type: 3}

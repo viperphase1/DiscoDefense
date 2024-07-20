@@ -4,6 +4,8 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
+  - inputActionAsset: {fileID: -944628639613478452, guid: 9026631206fc3e94dba9ba39b208532a,
+      type: 3}
   - ammoPrefab: {instanceID: 0}
   - defaultSound: {instanceID: 0}
   - defaultMaterial: {fileID: 2100000, guid: 50499b32b88675f4f987d634ed7dc062, type: 2}

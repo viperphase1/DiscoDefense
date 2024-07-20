@@ -93,7 +93,7 @@ public class Endless : MonoBehaviour
     private Transform exit;
     private List<Transform> waypoints = new List<Transform>();
 
-    MusicManager mm;
+    public MusicManager mm;
 
     private Action onFail;
     private Action onSuccess;
@@ -465,11 +465,22 @@ public class Endless : MonoBehaviour
 
         // the maximum number of powerups should be the surface area / 25
         int max = (int) Math.Ceiling((double) area / 25);
-        int num_powerups = rng.Next(0, max);
+        // int num_powerups = rng.Next(0, max);
+        int num_powerups = 10;
         for (int i = 0; i < num_powerups; i++) {
-            int sector_index = rng.Next(0, sectors.Count);
-            int cell_index = rng.Next(0, sectors[sector_index].Count);
-            DropPoint dp = sectors[sector_index][cell_index];
+            int sector_index;
+            int cell_index;
+            DropPoint dp;
+            void reposition() {
+                sector_index = rng.Next(0, sectors.Count);
+                cell_index = rng.Next(0, sectors[sector_index].Count);
+                dp = sectors[sector_index][cell_index];
+            }
+            reposition();
+            // make sure not to drop power ups in the starting or exit area
+            while ((dp.coordinates[0] == exitPoint[0] && dp.coordinates[1] == exitPoint[1]) || (dp.coordinates[0] == startingPoint[0] && dp.coordinates[1] == startingPoint[1])) {
+                reposition();
+            }
             // TODO: save some power ups for later rounds
             int pu_index = rng.Next(0, powerups.Length);
             PowerUp selectedPowerUp = powerups[pu_index];

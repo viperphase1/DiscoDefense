@@ -83,7 +83,7 @@ public class SentryBehavior : TowerBehavior
                         foreach(Transform waypoint in waypoints) {
                             bool obstructed = Physics.Raycast(waypoint.position, playerCamera.position - waypoint.position, scale, 1 << LayerMask.NameToLayer("Structures") | 1 << LayerMask.NameToLayer("Towers"));
                             if (!obstructed) {
-                                if (Vector3.Distance(waypoint.position, player.position) < newDistanceToPlayer) {
+                                if (Vector3.Distance(waypoint.position, playerObject.position) < newDistanceToPlayer) {
                                     toWaypoint = waypoint;
                                     newDistanceToPlayer = Vector3.Distance(toWaypoint.position, playerCamera.transform.position);
                                 }

@@ -14,7 +14,7 @@ public class LaserBehavior : FollowBehavior
     public override void tracking() {
         base.tracking();
         // check if the laser can make contact with a solid object
-        int layerMask = 1 << LayerMask.NameToLayer("Structures") | 1 << LayerMask.NameToLayer("Towers") | 1 << LayerMask.NameToLayer("Player Camera");
+        int layerMask = LayerMaskHelper.GetLayerMask("Structures", "Towers", "Player Camera", "Accessories");
         bool hit = Physics.Raycast(spawnPoint.position, transform.rotation * Vector3.left, out RaycastHit hitInfo, Mathf.Infinity, layerMask);
         if (hit) {
             Debug.Log("Laser can hit " + hitInfo.collider.transform.name);
@@ -23,7 +23,7 @@ public class LaserBehavior : FollowBehavior
             Vector3[] positions = {spawnPoint.position, hitInfo.point};
             lineRenderer.SetPositions(positions);
             if (Transform.ReferenceEquals(hitInfo.collider.transform, playerCamera)) {
-                player.GetComponent<Player>().takeDamage(damage);
+                player.takeDamage(damage);
             }
         } else {
             // otherwise, we should not render the laser

@@ -109,4 +109,8 @@ public class MusicManager : MonoBehaviour
             Debug.Log("Cannot create a visualizer without an audio source");
         }
     }
+
+    void Update() {
+        Debug.Log("MM AudioSource Pitch: " + audioSource.pitch);
+    }
 }

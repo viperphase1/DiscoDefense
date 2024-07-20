@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
 using static Global;
 
 public class TowerBehavior : MonoBehaviour
 {
+    public InputActionProperty tapRightTriggerAction;
     public GameObject ammoPrefab;
     public AudioClip defaultSound;
     public Material defaultMaterial;
@@ -24,11 +26,23 @@ public class TowerBehavior : MonoBehaviour
     protected AudioSource audioSource;
     protected bool withinRange = false;
     protected Transform spawnPoint;
-    protected Transform player;
+    protected Transform playerObject;
     protected Transform playerCamera;
+    protected Player player;
     protected int lastInterval;
+    private Renderer[] renderers;
+    private bool hovering = false;
 
-    private List<Renderer> renderers = new List<Renderer>();
+    void OnEnable()
+    {
+        tapRightTriggerAction.action.Enable();
+        tapRightTriggerAction.action.performed += OnTapRightTrigger;
+    }
+
+    void OnDisable()
+    {
+        tapRightTriggerAction.action.performed -= OnTapRightTrigger;
+    }
 
     public virtual void Start()
     {
@@ -36,7 +50,8 @@ public class TowerBehavior : MonoBehaviour
         while (root.parent) {
             root = root.parent.transform;
         }
-        player = Global.FindDeepChild(root, "Player");
+        playerObject = Global.FindDeepChild(root, "Player");
+        player = playerObject.GetComponent<Player>();
         playerCamera = Global.FindDeepChild(root, "Main Camera");
         spawnPoint = Global.FindDeepChild(transform, "SpawnPoint");
 
@@ -50,17 +65,18 @@ public class TowerBehavior : MonoBehaviour
         }
 
         // apply default material
-        renderers = DeepGetComponents<Renderer>(transform);
+        renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
         foreach (Renderer renderer in renderers) {
             renderer.material = defaultMaterial;
         }
 
         // Add XR Grab Interactable component for highlighting
-        // XRGrabInteractable interactable = gameObject.AddComponent<XRGrabInteractable>();
+        XRGrabInteractable interactable = gameObject.AddComponent<XRGrabInteractable>();
+        gameObject.GetComponent<Rigidbody>().isKinematic = true;
 
         // Configure hover events
-        // interactable.hoverEntered.AddListener((hoverEvent) => OnHoverEnter());
-        // interactable.hoverExited.AddListener((hoverEvent) => OnHoverExit());
+        interactable.hoverEntered.AddListener((hoverEvent) => OnHoverEnter());
+        interactable.hoverExited.AddListener((hoverEvent) => OnHoverExit());
     }
 
     // Update is called once per frame
@@ -94,12 +110,12 @@ public class TowerBehavior : MonoBehaviour
             var ammo = Instantiate(ammoPrefab).transform;
             ammo.name = slug + "_" + "ammo";
             var ab = ammo.GetComponent<AmmoBehavior>();
-            ab.player = player.GetComponent<Player>();
+            ab.player = playerObject.GetComponent<Player>();
             ab.damage = damage;
             ammo.position = spawnPoint.position;
             Vector3 ammoToPlayer = playerCamera.transform.position - ammo.position;
             ammoToPlayer.Normalize();
-            var rigidBodies = GetAllRigidBodies(ammo);
+            var rigidBodies = ammo.GetComponentsInChildren<Rigidbody>();
             foreach (Rigidbody rb in rigidBodies) {
                 rb.velocity = ammoToPlayer * velocity;
             }
@@ -109,6 +125,7 @@ public class TowerBehavior : MonoBehaviour
 
     public void OnHoverEnter()
     {
+        hovering = true;
         foreach (Renderer renderer in renderers) {
             renderer.material = highlightMaterial;
         }
@@ -116,8 +133,17 @@ public class TowerBehavior : MonoBehaviour
 
     public void OnHoverExit()
     {
+        hovering = false;
         foreach (Renderer renderer in renderers) {
             renderer.material = defaultMaterial;
+        }
+    }
+
+    private void OnTapRightTrigger(InputAction.CallbackContext context) {
+        if (hovering && player.bullets > 0) {
+            // play explosion effect
+            Destroy(gameObject);
+            player.bullets -= 1;
         }
     }
 }

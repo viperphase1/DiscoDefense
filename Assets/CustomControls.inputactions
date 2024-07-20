@@ -1,0 +1,34 @@
+{
+    "name": "CustomControls",
+    "maps": [
+        {
+            "name": "RightControllerActions",
+            "id": "1daae31c-fa8c-4391-bac4-642f8dc589ba",
+            "actions": [
+                {
+                    "name": "TriggerTap",
+                    "type": "Button",
+                    "id": "e0e56c46-b5da-426f-a7d3-e0850d2eb2ba",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "535ba22a-b2cb-4ad8-86f2-ca2dff5893f5",
+                    "path": "<XRController>{RightHand}/triggerPressed",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TriggerTap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
