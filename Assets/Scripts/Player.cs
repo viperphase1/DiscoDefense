@@ -16,6 +16,8 @@ public class Player : MonoBehaviour
     private TextMeshProUGUI healthCount;
     private AudioSource audioSource;
     private Dictionary<string, Image> icons = new Dictionary<string, Image>();
+    public Transform shield;
+    public int bullets = 0;
 
     void reset() {
         health = maxHealth;
@@ -28,6 +30,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        shield = Global.FindDeepChild(transform, "Shield");
         healthBar = GetComponentInChildren<Slider>();
         healthCount = GetComponentInChildren<TextMeshProUGUI>();
         audioSource = gameObject.AddComponent<AudioSource>();

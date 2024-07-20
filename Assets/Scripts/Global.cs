@@ -20,21 +20,27 @@ public class Global
         return null;
     }
 
-    public static List<Rigidbody> GetAllRigidBodies(Transform root) {
-        var rigidBodies = new List<Rigidbody>();
+    public static List<T> DeepGetComponents<T>(Transform root) where T : Component
+    {
+        var components = new List<T>();
         Queue<Transform> queue = new Queue<Transform>();
         queue.Enqueue(root);
         while (queue.Count > 0)
         {
             var c = queue.Dequeue();
-            var rigidBody = c.GetComponent<Rigidbody>();
-            if (rigidBody) {
-                rigidBodies.Add(rigidBody);
+            var _components = c.GetComponents<T>();
+            if (_components.Length > 0) {
+                components.AddRange(_components);
             }
             foreach(Transform t in c)
                 queue.Enqueue(t);
         }
-        return rigidBodies;
+
+        return components;
+    }
+
+    public static List<Rigidbody> GetAllRigidBodies(Transform root) {
+        return DeepGetComponents<Rigidbody>(root);
     }
 
     public static void PointBurst(Vector3 epiCenter, Transform[] affectedObjects, float power = 10.0f, float radius = 2.0f) {

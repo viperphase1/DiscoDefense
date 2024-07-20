@@ -4831,6 +4831,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2447939446349506610}
   - component: {fileID: 6952273835131234144}
+  - component: {fileID: 8780743251196065450}
   m_Layer: 0
   m_Name: FlameTower
   m_TagString: Untagged
@@ -4869,6 +4870,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ammoPrefab: {fileID: 0}
   defaultSound: {fileID: 8300000, guid: b4a77c69e9442dd4d955c491e9d51266, type: 3}
+  defaultMaterial: {fileID: 2100000, guid: 50499b32b88675f4f987d634ed7dc062, type: 2}
+  highlightMaterial: {fileID: 2100000, guid: 6ca52cddb0210004e8062eea5dfd6d69, type: 2}
   radius: 1.5
   fireRate: 2
   damage: 1
@@ -4877,6 +4880,19 @@ MonoBehaviour:
   mm: {fileID: 0}
   slug: Flame
   rotationSpeed: 30
+--- !u!135 &8780743251196065450
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3591781631123867944}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1403764425032475978
 PrefabInstance:
   m_ObjectHideFlags: 0

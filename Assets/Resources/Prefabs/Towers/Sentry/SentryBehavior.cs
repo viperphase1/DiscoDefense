@@ -68,7 +68,7 @@ public class SentryBehavior : TowerBehavior
             gameObject.layer = LayerMask.NameToLayer("Towers");
             withinRange = !obstructed;
         }
-        if (distanceToPlayer > 1f + transform.GetComponent<BoxCollider>().size.z) {
+        if (distanceToPlayer > 1f + transform.GetComponent<SphereCollider>().radius * 2) {
             // move forward through the maze or follow the player if within range
             if (transform.position == toWaypoint.position) {
                 toWaypoint.GetComponent<Waypoint>().reservedBy = null;

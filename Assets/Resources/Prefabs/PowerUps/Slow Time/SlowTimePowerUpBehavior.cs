@@ -18,6 +18,12 @@ public class SlowTimePowerUpBehavior : PowerUpBehavior
     void Update() {
         if (Time.time - startTime > duration) {
             action = "speedUp";
+        } 
+        // the slow time powerup is extended by increasing the duration
+        // this may happen when the powerup is on it's final transition
+        // in this case we just need to set the action back to "slowDown"
+        else if (action == "speedUp") {
+            action = "slowDown";
         }
         if (action == "slowDown") {
             slowDown();

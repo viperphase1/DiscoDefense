@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
 using static Global;
 
 public class TowerBehavior : MonoBehaviour
 {
     public GameObject ammoPrefab;
     public AudioClip defaultSound;
+    public Material defaultMaterial;
+    public Material highlightMaterial;
     public float radius = 3f;
     // fireRate is in beats. A value of 2 means that this tower will fire every 2 beats
     public float fireRate = 2f;
@@ -25,6 +28,8 @@ public class TowerBehavior : MonoBehaviour
     protected Transform playerCamera;
     protected int lastInterval;
 
+    private List<Renderer> renderers = new List<Renderer>();
+
     public virtual void Start()
     {
         Transform root = transform;
@@ -38,10 +43,24 @@ public class TowerBehavior : MonoBehaviour
         // add audio source at runtime
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.clip = defaultSound;
+        RouteAudioSourceToMixerGroup(audioSource, "SFX");
         TowerSoundEffect themedSound = theme.towerSoundEffects.FirstOrDefault(sfx => sfx.towerSlug == slug);
         if (themedSound != null) {
             audioSource.clip = themedSound.clip;
         }
+
+        // apply default material
+        renderers = DeepGetComponents<Renderer>(transform);
+        foreach (Renderer renderer in renderers) {
+            renderer.material = defaultMaterial;
+        }
+
+        // Add XR Grab Interactable component for highlighting
+        // XRGrabInteractable interactable = gameObject.AddComponent<XRGrabInteractable>();
+
+        // Configure hover events
+        // interactable.hoverEntered.AddListener((hoverEvent) => OnHoverEnter());
+        // interactable.hoverExited.AddListener((hoverEvent) => OnHoverExit());
     }
 
     // Update is called once per frame
@@ -85,6 +104,20 @@ public class TowerBehavior : MonoBehaviour
                 rb.velocity = ammoToPlayer * velocity;
             }
             audioSource.Play(0);
+        }
+    }
+
+    public void OnHoverEnter()
+    {
+        foreach (Renderer renderer in renderers) {
+            renderer.material = highlightMaterial;
+        }
+    }
+
+    public void OnHoverExit()
+    {
+        foreach (Renderer renderer in renderers) {
+            renderer.material = defaultMaterial;
         }
     }
 }

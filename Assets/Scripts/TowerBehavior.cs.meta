@@ -3,7 +3,12 @@ guid: bd7dcd4d5d6b2f24e8fd768f8cd10590
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - ammoPrefab: {instanceID: 0}
+  - defaultSound: {instanceID: 0}
+  - defaultMaterial: {fileID: 2100000, guid: 50499b32b88675f4f987d634ed7dc062, type: 2}
+  - highlightMaterial: {fileID: 2100000, guid: 6ca52cddb0210004e8062eea5dfd6d69, type: 2}
+  - mm: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 8387064742571450790}
   - component: {fileID: 7064554698018807745}
   - component: {fileID: 1273523558702095374}
+  - component: {fileID: 6986335998653143720}
   m_Layer: 0
   m_Name: LaserTower
   m_TagString: Untagged
@@ -179,6 +180,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ammoPrefab: {fileID: 0}
   defaultSound: {fileID: 8300000, guid: 40f7a649bc50bbe4d93af6b8f772ad5d, type: 3}
+  defaultMaterial: {fileID: 2100000, guid: 50499b32b88675f4f987d634ed7dc062, type: 2}
+  highlightMaterial: {fileID: 2100000, guid: 6ca52cddb0210004e8062eea5dfd6d69, type: 2}
   radius: 3
   fireRate: 2
   damage: 0.01
@@ -187,6 +190,19 @@ MonoBehaviour:
   mm: {fileID: 0}
   slug: Laser
   rotationSpeed: 60
+--- !u!135 &6986335998653143720
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4746440475213639839}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &5394175043127320776
 PrefabInstance:
   m_ObjectHideFlags: 0
