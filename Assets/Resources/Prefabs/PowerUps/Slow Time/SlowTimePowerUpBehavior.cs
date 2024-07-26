@@ -1,19 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Global;
 
 public class SlowTimePowerUpBehavior : PowerUpBehavior
 {
     private float minTimeScale = 0.75f;
     private float myDeltaTime;
-    private float speed = .4f;
+    private float speed = .2f;
     private string action = "hold";
     private float startTime = Mathf.Infinity;
     private AudioSource audioSrc;
 
     void Start() {
         myDeltaTime = Time.deltaTime;
-        audioSrc = GameObject.Find("Root").GetComponent<Endless>().mm.audioSource;
+        audioSrc = mm.audioSource;
     }
 
     void Update() {

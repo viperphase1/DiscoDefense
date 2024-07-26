@@ -5,6 +5,6 @@ using UnityEngine;
 public class BulletPowerUpBehavior : PowerUpBehavior
 {
     protected override void ApplyPowerUp() {
-        player.bullets += 1;
+        player.addBullet();
     }
 }

@@ -14,8 +14,10 @@ public class Player : MonoBehaviour
     private float maxScale;
     private Slider healthBar;
     private TextMeshProUGUI healthCount;
+    private TextMeshProUGUI bulletCount;
+    private TextMeshProUGUI timer;
     public AudioSource audioSource;
-    private Dictionary<string, Image> icons = new Dictionary<string, Image>();
+    public Dictionary<string, Image> icons = new Dictionary<string, Image>();
     public Transform shield;
     public int bullets = 0;
 
@@ -32,10 +34,13 @@ public class Player : MonoBehaviour
     {
         shield = Global.FindDeepChild(transform, "Shield");
         healthBar = GetComponentInChildren<Slider>();
-        healthCount = GetComponentInChildren<TextMeshProUGUI>();
+        healthCount = Global.FindDeepChild(transform, "Health Count").GetComponent<TextMeshProUGUI>();
+        bulletCount = Global.FindDeepChild(transform, "Bullet Count").GetComponent<TextMeshProUGUI>();
+        timer = Global.FindDeepChild(transform, "Timer").GetComponent<TextMeshProUGUI>();
         audioSource = gameObject.AddComponent<AudioSource>();
         icons["fire"] = Global.FindDeepChild(transform, "Fire Icon").GetComponent<Image>();
         icons["poison"] = Global.FindDeepChild(transform, "Poison Icon").GetComponent<Image>();
+        icons["shield"] = Global.FindDeepChild(transform, "Shield Icon").GetComponent<Image>();
         reset();
     }
 
@@ -68,6 +73,11 @@ public class Player : MonoBehaviour
         health += amount;
         if (health > maxHealth) health = maxHealth;
         UpdateHealthBar();
+    }
+
+    public void addBullet(int amount = 1) {
+        bullets += amount;
+        bulletCount.text = bullets.ToString();
     }
 
     public void UpdateHealthBar()

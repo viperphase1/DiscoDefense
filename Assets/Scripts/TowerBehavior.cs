@@ -141,9 +141,10 @@ public class TowerBehavior : MonoBehaviour
 
     private void OnTapRightTrigger(InputAction.CallbackContext context) {
         if (hovering && player.bullets > 0) {
-            // play explosion effect
+            Transform explosionPrefab = Resources.Load<Transform>("Prefabs/Explode");
+            Instantiate(explosionPrefab, transform.position, Quaternion.identity, transform.parent);
             Destroy(gameObject);
-            player.bullets -= 1;
+            player.addBullet(-1);
         }
     }
 }

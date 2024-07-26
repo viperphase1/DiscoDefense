@@ -93,4 +93,5 @@ public class Global
     public static AudioMixer mixer = Resources.Load<AudioMixer>("Mixer");
 
     public static Theme theme;
+    public static MusicManager mm;
 }

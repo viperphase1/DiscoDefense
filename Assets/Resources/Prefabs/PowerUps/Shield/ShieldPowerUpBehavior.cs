@@ -13,9 +13,13 @@ public class ShieldPowerUpBehavior : PowerUpBehavior
     }
 
     void Update() {
-        if (Time.time - startTime > duration) {
-            player.shield.gameObject.SetActive(false);
-            resolve();
+        if (claimed) {
+            float elapsed = Time.time - startTime;
+            player.icons["shield"].fillAmount = Mathf.Max(Mathf.Min(1, (duration - elapsed) / duration), 0);
+            if (elapsed > duration) {
+                player.shield.gameObject.SetActive(false);
+                resolve();
+            }
         }
     }
 }

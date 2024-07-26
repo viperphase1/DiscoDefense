@@ -93,8 +93,6 @@ public class Endless : MonoBehaviour
     private Transform exit;
     private List<Transform> waypoints = new List<Transform>();
 
-    public MusicManager mm;
-
     private Action onFail;
     private Action onSuccess;
 

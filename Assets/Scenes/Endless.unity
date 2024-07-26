@@ -1100,30 +1100,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3532686915896810797, guid: 70f88415fc6e6714384180eb63aebd01,
+    - target: {fileID: 4201137881076680599, guid: 70f88415fc6e6714384180eb63aebd01,
         type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 4090415497980602616, guid: 70f88415fc6e6714384180eb63aebd01,
-        type: 3}
-      propertyPath: m_UseGravity
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4090415497980602616, guid: 70f88415fc6e6714384180eb63aebd01,
-        type: 3}
-      propertyPath: m_IsKinematic
-      value: 1
+      propertyPath: m_LocalPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9199866844943052319, guid: 70f88415fc6e6714384180eb63aebd01,
         type: 3}
       propertyPath: m_Name
       value: Shield
-      objectReference: {fileID: 0}
-    - target: {fileID: 9199866844943052319, guid: 70f88415fc6e6714384180eb63aebd01,
-        type: 3}
-      propertyPath: m_Layer
-      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 9199866844943052319, guid: 70f88415fc6e6714384180eb63aebd01,
         type: 3}
@@ -1219,7 +1204,6 @@ MonoBehaviour:
   roundOffset: 2
   areaIncrement: 3
   rounds: []
-  mm: {fileID: 0}
 --- !u!4 &924133388
 Transform:
   m_ObjectHideFlags: 0
@@ -2405,30 +2389,10 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1049626409}
-    - target: {fileID: 1094109208580381147, guid: b95cd4cd2b07ee44b988e6300583bae9,
-        type: 3}
-      propertyPath: m_Color.a
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1316302868134968612, guid: b95cd4cd2b07ee44b988e6300583bae9,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1316302868134968612, guid: b95cd4cd2b07ee44b988e6300583bae9,
         type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4868967908603454776, guid: b95cd4cd2b07ee44b988e6300583bae9,
-        type: 3}
-      propertyPath: m_Value
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6086903880136981346, guid: b95cd4cd2b07ee44b988e6300583bae9,
-        type: 3}
-      propertyPath: m_Color.a
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8507939557688144023, guid: b95cd4cd2b07ee44b988e6300583bae9,
         type: 3}
