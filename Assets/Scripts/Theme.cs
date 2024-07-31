@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 
 [System.Serializable]
 public class TowerSoundEffect {
@@ -13,6 +14,7 @@ public class Theme : ScriptableObject {
 
     public List<Material> wallMaterials = new List<Material>();
     public List<Material> floorMaterials = new List<Material>();
+    public List<VideoClip> wallVideos = new List<VideoClip>();
     public List<MusicTrack> tracks = new List<MusicTrack>();
     public List<TowerSoundEffect> towerSoundEffects = new List<TowerSoundEffect>();
     public AudioClip swingClip;

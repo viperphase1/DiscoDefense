@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Video;
 using Random = System.Random;
 using Math = System.Math;
 using Enum = System.Enum;
@@ -78,8 +80,10 @@ public class Endless : MonoBehaviour
     public int probabilityRings = 3;
     public int roundOffset = 2;
     public int areaIncrement = 3;
+    public List<Material> videoMaterials = new List<Material>();
     public List<RoundConstraint> rounds = new List<RoundConstraint>();
     private GameObject player;
+    private List<VideoPlayer> videoPlayers;
     private GameObject mazeContainer;
     private GameObject headContainer;
     private GameObject towerContainer;
@@ -122,6 +126,7 @@ public class Endless : MonoBehaviour
         themes = SOManager.GetAllInstances<Theme>();
 
         player = transform.Find("Player").gameObject;
+        videoPlayers = transform.Find("VideoPlayers").gameObject.GetComponents<VideoPlayer>().ToList();
         mazeContainer = transform.Find("MazeContainer").gameObject;
         headContainer = transform.Find("HeadContainer").gameObject;
         towerContainer = transform.Find("TowerContainer").gameObject;
@@ -212,7 +217,7 @@ public class Endless : MonoBehaviour
         int num5x5Rooms = 0;
 
         if (area >= 72) {
-            num3x3Rooms = (int) Math.Ceiling((double) area / 36);
+            num3x3Rooms = (int) Math.Ceiling((double) area / 72);
         }
         // After adding 3x3 rooms, 5x5 rooms remove too many walls
         // if (area >= 100) {
@@ -309,6 +314,13 @@ public class Endless : MonoBehaviour
             sectors.Add(new List<DropPoint>());
         }
         waypoints = new List<Transform>();
+
+        bool dropPointIsFree(DropPoint dp) {
+            bool isExit = dp.coordinates[0] == exitPoint[0] && dp.coordinates[1] == exitPoint[1];
+            bool isStart = dp.coordinates[0] == startingPoint[0] && dp.coordinates[1] == startingPoint[1];
+            return !isExit && !isStart;
+        }
+
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 int[] cell = {i, j};
@@ -320,10 +332,11 @@ public class Endless : MonoBehaviour
                 waypoint.name = $"WaypointAt({i},{j})";
                 waypoint.position = new Vector3(cellPosition.x, 0.5f, cellPosition.z);
                 waypoints.Add(waypoint);
-
                 DropPoint cp = new DropPoint(cellPosition);
                 cp.coordinates = cell;
                 cp.type = PointType.Cell;
+                // this should stop powerups and towers from being placed in the exit or starting point
+                if (!dropPointIsFree(cp)) continue;
                 sectors[sector].Add(cp);
                 int weight = 1;
                 for (int k = 0; k < rooms.Count; k++) {
@@ -340,12 +353,12 @@ public class Endless : MonoBehaviour
                     }
                 }
                 // give more weight to cells close to the exit, the weight should scale with the area of the maze
-                float exitProximity = (cellPosition - new Vector3(exit.transform.position.x, 0, exit.transform.position.z)).magnitude / size;
-                if (exitProximity <= probabilityRings * Math.Sqrt(2)) {
-                    weight = (probabilityRings + 1) - (int) Math.Floor(exitProximity);
-                    cp.type |= PointType.Guard;
-                    weight = weight * Math.Max(1, guardWeightScaleFactor);
-                }
+                // float exitProximity = (cellPosition - new Vector3(exit.transform.position.x, 0, exit.transform.position.z)).magnitude / size;
+                // if (exitProximity <= probabilityRings * Math.Sqrt(2)) {
+                //     weight = (probabilityRings + 1) - (int) Math.Floor(exitProximity);
+                //     cp.type |= PointType.Guard;
+                //     weight = weight * Math.Max(1, guardWeightScaleFactor);
+                // }
                 for (int k = 1; k <= weight; k++) {
                     cellPoints.Add(cp);
                 }
@@ -371,12 +384,12 @@ public class Endless : MonoBehaviour
                     }
                 }
                 // give more weight to vertices close to the exit, the weight should scale with the area of the maze
-                float exitProximity = (vertexPosition - new Vector3(exit.transform.position.x, 0, exit.transform.position.z)).magnitude / size;
-                if (exitProximity <= (probabilityRings + 2) * Math.Sqrt(2) / 2) {
-                    weight = (probabilityRings + 1) - (int) Math.Floor(exitProximity);
-                    vp.type |= PointType.Guard;
-                    weight = weight * Math.Max(1, guardWeightScaleFactor);
-                }
+                // float exitProximity = (vertexPosition - new Vector3(exit.transform.position.x, 0, exit.transform.position.z)).magnitude / size;
+                // if (exitProximity <= (probabilityRings + 2) * Math.Sqrt(2) / 2) {
+                //     weight = (probabilityRings + 1) - (int) Math.Floor(exitProximity);
+                //     vp.type |= PointType.Guard;
+                //     weight = weight * Math.Max(1, guardWeightScaleFactor);
+                // }
                 for (int k = 1; k <= weight; k++) {
                     vertexPoints.Add(vp);
                 }
@@ -411,13 +424,16 @@ public class Endless : MonoBehaviour
             Tower tower = selectedTowers[i];
             PointType types = tower.supportedPointTypes;
             if (types.HasFlag(PointType.Cell) && types.HasFlag(PointType.Vertex)) {
+                Debug.Log("Tower location selected from all points");
                 selectedPoint = allPoints[rng.Next(0, allPoints.Count)];
             } else if (types.HasFlag(PointType.Cell)) {
                 // select a point from the portion of allPoints that are cells
+                Debug.Log("Tower location selected from cell points");
                 selectedPoint = allPoints[rng.Next(0, remainingCellCount)];
             } else {
                 // selectedPoint is a vertex
                 // select a point from the portion of allPoints that are vertices
+                Debug.Log("Tower location selected from vertex points");
                 selectedPoint = allPoints[rng.Next(remainingCellCount, allPoints.Count)];
             }
             selectedPoints.Add(selectedPoint);
@@ -463,8 +479,8 @@ public class Endless : MonoBehaviour
 
         // the maximum number of powerups should be the surface area / 25
         int max = (int) Math.Ceiling((double) area / 25);
-        // int num_powerups = rng.Next(0, max);
-        int num_powerups = 10;
+        int num_powerups = rng.Next(0, max);
+        // int num_powerups = 10;
         for (int i = 0; i < num_powerups; i++) {
             int sector_index;
             int cell_index;
@@ -476,7 +492,7 @@ public class Endless : MonoBehaviour
             }
             reposition();
             // make sure not to drop power ups in the starting or exit area
-            while ((dp.coordinates[0] == exitPoint[0] && dp.coordinates[1] == exitPoint[1]) || (dp.coordinates[0] == startingPoint[0] && dp.coordinates[1] == startingPoint[1])) {
+            while (!dropPointIsFree(dp)) {
                 reposition();
             }
             // TODO: save some power ups for later rounds
@@ -495,6 +511,19 @@ public class Endless : MonoBehaviour
         // add disco lights
         discoLights.addLights();
 
+        // update video players
+        List<Material> wallMaterials = new List<Material>();
+        wallMaterials.AddRange(theme.wallMaterials);
+        foreach (VideoPlayer vp in videoPlayers) {
+            vp.Stop();
+            vp.clip = null;
+        }
+        for (int i = 0; i < theme.wallVideos.Count; i++) {
+            videoPlayers[i].clip = theme.wallVideos[i];
+            videoPlayers[i].Play();
+            wallMaterials.Add(videoMaterials[i]);
+        }
+
         // add wall and floor decorations
         foreach (Transform childTransform in mazeObject.transform) {
             var childObject = childTransform.gameObject;
@@ -506,8 +535,8 @@ public class Endless : MonoBehaviour
             } else {
                 // add wall decorations to 25% of walls
                 bool addMaterial = rng.Next(0, 4) == 0;
-                if (addMaterial && theme.wallMaterials.Count > 0) {
-                    renderer.material = theme.wallMaterials[rng.Next(0,theme.wallMaterials.Count)];   
+                if (addMaterial && wallMaterials.Count > 0) {
+                    renderer.material = wallMaterials[rng.Next(0,wallMaterials.Count)];   
                 }
             }
         }

@@ -27,13 +27,6 @@ public class AmmoBehavior : MonoBehaviour
 
     void OnCollisionEnter(Collision collision) {
         if (destroyInProgress) return;
-        if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Player Camera")) {
-            Debug.Log("Ammo/Player Collision");
-            OnDestroy();
-            player.takeDamage(damage);
-            // TODO: hit animation
-            // TODO: hit sfx
-        }
         if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Structures")) {
             if (ricochet == 0 || bounces > ricochet) {
                 Debug.Log("Ammo/Wall Collision");
@@ -41,6 +34,17 @@ public class AmmoBehavior : MonoBehaviour
             } else {
                 bounces++;
             }
+        }
+    }
+
+    void OnTriggerEnter(Collider collider) {
+        if (destroyInProgress) return;
+        if (collider.gameObject.layer == LayerMask.NameToLayer("Player Camera")) {
+            Debug.Log("Ammo/Player Collision");
+            OnDestroy();
+            player.takeDamage(damage);
+            // TODO: hit animation
+            // TODO: hit sfx
         }
     }
 

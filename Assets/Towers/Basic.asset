@@ -15,4 +15,6 @@ MonoBehaviour:
   towerPrefab: {fileID: 4478450633317807578, guid: 80b07644006a9404ca8e3ee4c1d30c5e,
     type: 3}
   price: 300
+  supportedPointTypes: -1
+  towerHeight: 3
   areaTowerCapRatio: 0.33333334

@@ -180,7 +180,7 @@ MonoBehaviour:
       type: 3}
   ammoPrefab: {fileID: 6635646934891868029, guid: e9364f5d8d20bdd45befc31b3e8ed5af,
     type: 3}
-  defaultSound: {fileID: 8300000, guid: 1df4125fb1df0b04f891bab1afe613d9, type: 3}
+  defaultSound: {fileID: 8300000, guid: 0c5466eefdbcc60448985f653b969d7d, type: 3}
   defaultMaterial: {fileID: 2100000, guid: 50499b32b88675f4f987d634ed7dc062, type: 2}
   highlightMaterial: {fileID: 2100000, guid: 6ca52cddb0210004e8062eea5dfd6d69, type: 2}
   radius: 3

@@ -14,10 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wallMaterials: []
   floorMaterials: []
+  wallVideos:
+  - {fileID: 32900000, guid: a8a26b1ac2d089b4bb26b938aebf5aae, type: 3}
+  - {fileID: 32900000, guid: ff2f4ca9a4e9390458b9384e5a970ef1, type: 3}
+  - {fileID: 32900000, guid: a39d0fdd978ea5a41973914ac0713ad9, type: 3}
+  - {fileID: 32900000, guid: ee0315c2e609c794ba4d1d43bd301088, type: 3}
   tracks:
   - {fileID: 11400000, guid: 5d99e265ceb13d948b0959f5c1222569, type: 2}
   towerSoundEffects: []
-  swingClip: {fileID: 8300000, guid: 758a1087459eafc4f93290f224fc0add, type: 3}
+  swingClip: {fileID: 8300000, guid: f66ca5e040cf7314da6825352972932d, type: 3}
   colors:
   - {r: 0, g: 0.14186478, b: 1, a: 0}
   - {r: 0, g: 0.8113208, b: 0.36862746, a: 0}
